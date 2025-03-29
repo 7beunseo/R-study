@@ -39,7 +39,9 @@ x <- 1; y <- 2
 rm(x); rm(y)
 
 # 메모리에서 생성된 모든 객체들을 지움 
-rm()
+rm(list=ls())
+# ls()를 하면 현재 할당된 객체 목록이 나옴
+# list=ls() 형태로 전달하여 객체 목록이야 라고 전달해줌 
 
 # 메모리를 최대한 활용하고자 할 때
 memory.size(max=TRUE) # 'memory.size()' is no longer supported 
