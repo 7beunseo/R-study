@@ -94,3 +94,4 @@ b$group <- b
 ab <- rbind(a, b)
 splom(~ab, pch=c('a', 'b'), groups<-ab$group)
 
+

@@ -123,3 +123,6 @@ hist(mp)
 # 11-f
 qqnorm(mp)
 qqline(mp)
+
+height
+table(height)
