@@ -31,7 +31,10 @@ pnorm(0.05)
 pnorm(0.025)
 
 # 5
-dbinom(3, size=5, prob=1/6)
+# dbinom(3, size=5, prob=1/6)
+# 3 이상 나올 확률
+# 1 - P(X<=2)
+1 - pbnorm(2, size=5, prob=1/6)
 
 # 6
 # 모르겠음 
