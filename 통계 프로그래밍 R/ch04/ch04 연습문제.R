@@ -14,7 +14,7 @@ hist(rand_p)
 
 # 3
 # a
-qnorm(0.4, 10, 3, loewr.tail=F) # false를 써야 함, 오른쪽부터 계산함  
+qnorm(0.4, 10, 3, lower.tail=F) # false를 써야 함, 오른쪽부터 계산함  
 qnrom(0.6, 10, 3, lower.tail=T) # true로 할 경우 
 # b
 pnorm(12, 10, 3, lower.tail=F) # 12보다 '클' 확률임 
