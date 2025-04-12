@@ -129,6 +129,15 @@ cutd <- cut(d, breaks=c(min(d), 20, 30, max(d)), include.lowest = T)
 t <- table(cutd)
 names(t) <- c("20 미만", "20 이상 30 미만", "30이상")
 pie(t)
+# 위 방식으로 하면 20이 첫 번째 그룹에 포함되어버림
+
+# 직접 데이터를 나눠서 length를 계산해서 도수분포표를 만들면 됨 
+d1 <- d[d<20]
+d2 <- d[d>=20 & d<30]
+d3 <- d[d>=30]
+tab <- c(length(d1), length(d2), length(d3))
+pie(tab)
+
 dotchart(t)
 
 
