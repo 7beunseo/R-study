@@ -44,7 +44,7 @@ pt(1.5, 10) - pt(-1, 10)
 
 # 8
 # a
-1-ppois(3, lambda=1) # 1 - p(X <= 2)
+1 - ppois(2, lambda = 3) # P(X ≥ 3)
 # ppois(3, lambda=3, lower.tail=T)
 # b
 ppois(3, lambda=2) # P(X <= 3)
