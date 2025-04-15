@@ -27,10 +27,11 @@ plot(xgrid, d)
 
 # 3
 x <- seq(0, 1, length=100)
-x <- x[x > 0]    
 y <- log(x)
 z <- sqrt(x)
 w <- rep(1, 100)
+matplot(x, cbind(y, z, w), type=c("b", "h", "o"), pch=c(1, 2, 3) ) # 꼭 cbind로 해주어야 함! 
+
 # 3.1
 plot(x, y)
 # 3.2
@@ -117,3 +118,39 @@ trees
 # 8.2
 length(new_frame$Girth)
 mean(new_frame$Girth)
+
+# 7번 문제 data frame 이용해서 수정
+
+# 7.4
+data$score <- data$mid * 0.4 + data$final * 0.45 + data$homework * 0.15 # 아예 score 필드를 새롭게 추가함 
+data
+
+# 7.5
+data[data$score == min(data$score),]
+data[data$score == max(data$score),]
+
+# 7.6
+for(i in 1:length(data$score)) {
+  # 학생 가져오기 
+  stud <- data[i,]
+  name <- stud$name
+  score <- stud$score
+  degree <- ""
+  if(score >= 90) degree <- "A"
+  else if (score >= 80) degree <- "B"
+  else degree <- "C"
+  cat(name, score, degree, "\n")
+}
+
+# 7.7
+data$rank <- rank(-data$score) # 내림차순으로 
+data
+
+# 7.8
+data$rank <- rank(-data$score) # 내림차순으로 
+data[,c(1, 5, 6)]
+
+# 7.9
+data$sub <- data$final - data$mid
+data[order(-data$sub),] # 증가가 큰 순부터 작은 순으로 정렬 
+mean(data$sub) # 점수 차이의 평균 
