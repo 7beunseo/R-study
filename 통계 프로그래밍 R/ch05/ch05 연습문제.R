@@ -195,6 +195,11 @@ d[2, 1] / sum(d[2,])
 # c
 d[1,1]/sum(d[1,]) - d[2, 1] / sum(d[2,])
 
+# 비율표로 보면 비율이 바로 나옴
+# 그리고!! 분할표 colname, rowname 지정하면 안 헷갈림! 
+prop.table(data[1,])
+prop.table(data[2,])
+
 # d
 pie(d[1,])
 pie(d[2,])
