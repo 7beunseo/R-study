@@ -97,6 +97,17 @@ levene.test(y, group, location = "median")    # 중앙값 기반
 levene.test(y, group, location = "trimmed", trim.alpha = 0.1)  # 절사평균 기반
 ```
 
+# 잔차
+
+#### 잔차 출력
+`aov.sum$residuals` = `residuals(aov.sum)`= 
+
+#### 처리효과 출력하기 
+`tapply(y, trt, mean) - mean(y)` = `model.tables(aov.sum)`
+
+#### 적합값 출력하기 
+`predict(aov.sum)` = `aov.sum$fitted`
+
 # 다중 비교
 분산분석에서 처리들의 효과가 모두 같다는 귀무가설이 기각됨. 구체적으로 어떤 처리가 다른 효과를 나타내는지 검정하기 위해 다중 비교 진행.
 
