@@ -162,6 +162,17 @@ lo <- mean(d) - dd
 up <- mean(d) + dd
 lo; up
 
+## 신뢰구간 t 분포 이용해야 함 ##
+dat <- c(2.3, 2.4, 3.1, 2.2, 1.0, 2.3, 2.1, 1.1, 1.2, 0.9, 1.5, 1.1)
+m <- mean(dat)
+sd <- sd(dat)
+n <- length(dat)
+t <- qt(0.975, df=(n - 1))
+
+up <- m - t * sd / sqrt(n)
+lo <- m + t * sd / sqrt(n)
+up; lo
+
 # d
 boxplot(d)
 
