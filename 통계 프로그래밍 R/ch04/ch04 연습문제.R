@@ -44,6 +44,16 @@ pt(1.5, 10) - pt(-1, 10)
 
 # 8
 # a
+1 - ppois(2, 3)
+# b
+ppois(3, 3)
+# c
+ppois(7, 3) - ppois(1, 3)
+# d
+ppois(4, 3)
+
+## 여기 다 잘못되어 있음 
+# a
 1 - ppois(2, lambda = 3) # P(X ≥ 3)
 # ppois(3, lambda=3, lower.tail=T)
 # b
