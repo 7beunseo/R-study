@@ -258,3 +258,58 @@ t(행렬) %*% 행렬
 .C -2.775558e-17 -2.775558e-17  1.000000e+00  0.000000e+00
 ^4  5.551115e-17 -1.110223e-16  0.000000e+00  1.000000e+00
 ```
+
+<hr>
+# 4장
+
+```r
+# 처리별 평균 (bar(yi))
+tapply(y, trt, mean)
+# 블록별 평균
+tapply(y, block, mean)
+
+# 처리효과
+tapply(y, trt, mean) - mean(y)
+# 블록효과 
+tapply(y, block, mean) - mean(y)
+
+ft = summ.aov[[1]]$`F value`[2]
+# p-value 구하기
+1 - pf(ft, 2, 6)
+# 기각역 구하기
+qf(0.95, 2, 6)
+
+# 분산 = MSe
+mse
+```
+
+## LSD 직접 구하기
+
+```r
+# LSD
+pairwise.t.test(y, trt, p.adjust="none")
+
+# LSD 값 직접 구하기 
+mse = summ.aov[[1]]$`Mean Sq`[3]
+t <- qt(0.975, 6) # 주의 t 분포이고, 자유도는 오차자유도를 사용함 
+se <- sqrt(2 * mse / 4) # 블록 개수로 나눔 （반복수로 나눔） 
+lsd <- t * se
+
+m <- tapply(y, trt, mean)
+m[1] - m[2]
+m[2] - m[3]
+m[1] - m[3]
+```
+
+## 적합값, 잔차 출력 
+* 실제 값 = y
+* 적합값 (00 평균) = `predict(aov)`, `aov$fitted`
+* 오차 추정값 = `aov$residuals`, `y - predict(aov)`, `y - aov$fitted`
+
+```
+# 적합값 출력
+aov.out$fitted
+
+# 잔차 출력
+aov.out$residuals
+```
