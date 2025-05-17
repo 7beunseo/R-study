@@ -25,6 +25,11 @@ t.test(x, mu=8.5, alt='less')
 # 평균이 8.5보다 작다고 할 통계적 근거가 없음 
 
 # >> 모분산을 아는 경우 
+# 분산 1.0인 정규분포를 따른다면? 
+z <- (mean(x) - 8.5)/(1/sqrt(length(x)))
+pvalue <- 2 * pnorm(-abs(z)) # 이 계산에 분산을 반영함 
+pvalue
+
 library(UsingR)
 simple.z.test(x, 1.0)
 # 8.132048 9.517952
