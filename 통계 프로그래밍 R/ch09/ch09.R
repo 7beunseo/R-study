@@ -93,3 +93,37 @@ summary(book.lm3)
 # p-value: 2.141e-07 -> 귀무가설 기각 -> 추정된 회귀계수는 유의하다 
 plot(book.lm3)
 
+
+#####
+# 5 #
+#####
+
+# 다중 선형 회귀모형
+all <- read.csv("intensity.csv", h=T)
+attach(all)
+out <- lm(intensity~temperature+pressure)
+summary(out)
+# y hat = -1180.2817 + 0.9945 * temperature + 18.7559 * pressure
+plot(out)
+
+# temp=200, pressure=63일경우의 예측값?
+predict(out, newdata=data.frame(temperature=200, pressure=63))
+# 200.2472
+
+#####
+# 6 #
+#####
+
+# 상호작용이 포함된 다중회귀식
+out2 <- lm(intensity~temperature+pressure+temperature:pressure)
+summary(out2)
+# 모두 유의하지 않음 -> p-value < 0.05 없음 
+
+#####
+# 7 #
+#####
+
+# 각 변수에 로그를 취한 값의 선형회귀식
+out3 <- lm(log(intensity) ~ log(temperature) + log(pressure))
+summary(out3)
+# hat log(intensity) = -39.0390 + 1.1831 * log(temperature) + 9.2060 * log(pressure)
