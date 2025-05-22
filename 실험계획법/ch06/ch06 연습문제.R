@@ -1,3 +1,61 @@
+### 효과 구하는방법
+# 주의 - r을 나누지 않는 이유는 tapply를 사용하면 r로 나눈 값이 나오므로 별도로 r을 곱하지 x  
+
+## 주효과일 경우 
+
+# A2 평균 - A1 평균
+tapply(y, a, mean)[2] - tapply(y, a, mean)[2] # 반복수도 분모로 기본적으로 들어감
+
+# (3차 상호작용 효과의 대비 반영 합 = CA) / (2 ^ (k-1) * r)
+tapply(y, a:b:c, mean) # 3차 상호작용의 평균, 반복수 반영된 평균
+cell_means <- c(87, 79, 81, 72, 76, 78, 81, 75) # tapply 결과 
+# contrast 계수: A0 조합은 -1, A1 조합은 +1
+contrast_a <- c(-1, -1, -1, -1, 1, 1, 1, 1)
+# 요인 수 (k = 3 in 2^k 설계)
+k <- 3
+# A 요인의 주효과 계산
+A_effect <- sum(contrast_a * cell_means) / (2^(k - 1))# 나오는 항들을 모두 더해서, 2 ^ (k-2) 로 나눔 
+
+# 대비 제곱합을 이용 
+# anova로 SSA를 구함 
+SSA <- res$`Sum Sq`[1]
+sqrt(SSA * 2 ^ (2 - k) / r)
+# 부호가 무조건 양수이므로, 부호 같이 고려해야 함 
+
+## 상호작용일 경우
+
+# AB 상호작용 효과
+# 대비 제곱합 이용 
+SSAB <- res$`Sum Sq`[4]
+SSAB
+sqrt(SSAB * 2 ^ (2 - k) / r)
+
+# 대비 합 
+cell_means <- c(87, 79, 81, 72, 76, 78, 81, 75) 
+c <- c(1, 1, -1, -1, -1, -1, 1, 1)
+sum(cell_means * c) / 2 ^ (k -1)
+
+# 3차 상호작용항의 경우 
+
+# 대비제곱합 이용 
+SSABC <- res$`Sum Sq`[7]
+SSABC
+sqrt(SSABC * 2 ^ (2 - k) / r)
+
+# 대비 합 
+cell_means <- c(87, 79, 81, 72, 76, 78, 81, 75) # tapply 결과 
+c <- c(-1, 1, 1, -1, 1, -1, -1, 1)
+sum(cell_means * c) / 2 ^ (k -1)
+
+## 반대로 대비제곱합 구하기 
+# SSA 
+cell_sums <- tapply(y3, a3:b3:c3, sum)
+contrast_a <- c(-1, -1, -1, -1, 1, 1, 1, 1)
+SSA <- sum(cell_sums * contrast_a) ^ 2 / (2 ^ (k) * r)
+SSA
+
+
+
 #####
 # 1 #
 #####
@@ -114,6 +172,7 @@ tapply(y3, a3:c3, mean)
 tapply(y3, b3:c3, mean)
 
 # 4
+# 주효과의 경우 간단하게 수준 1 평균에서 수준 0 평균을 빼면 됨 
 tapply(y3, a3, mean)[2] - tapply(y3, a3, mean)[1]
 tapply(y3, b3, mean)[2] - tapply(y3, b3, mean)[1]
 tapply(y3, c3, mean)[2] - tapply(y3, c3, mean)[1]
@@ -129,6 +188,23 @@ anova(L3)
 model.tables(L3)
 model.tables(L3, type="mean")
 
+# 먼저 k, r 선언해주기
+k <- 3 # 요인의 개수 
+r <- 2 # 반복수 
+
+# 대비 아용 (BC)
+contrast_bc <- c(1, -1, -1, 1, 1, -1, -1, 1)
+cell_means <- tapply(y3, a3:b3:c3, mean) # 이미 r로 나눈 평균 값이 나옴 
+bc_effects <- sum(contrast_bc * cell_means) / 2 ^ (k-1)
+bc_effects
+
+# 대비 제곱합 이용 (BC)
+res <- anova(L3)
+SSBC <- res$`Sum Sq`[6]
+sqrt(SSBC * 2 ^ (2 - k) / r) # 부호 없어짐 주의 
+
+
+# 아래는 이전에 고민한 내용 (틀림 ㅎ)
 # 꼭 4로 나눠줘야 함 !! 
 # 2^고려하고자 하는 요인 개수 로 나누기 
 # 참여하는 조합의 셀 수만큼 나누면 됨 
@@ -139,7 +215,7 @@ tapply(y3, a3:c3, mean)
 (84.0 - 75.5 - 78.5 + 76.5) / 4
 
 tapply(y3, b3:c3, mean)
-(81.5 - 78.5 - 81.0 + 73.5) / 4
+(81.5 - 78.5 - 81.0 + 73.5) / 4 # 분모 8r 중 2r이 분모로 들어간 상황이라 2로 나눠주었어야 함 
 
 # 7
 # 56.25
@@ -149,6 +225,10 @@ tapply(y3, b3:c3, mean)
 # 8
 tapply(y3, a3:b3:c3, mean)
 (87 - 79 - 81 + 72 - 76 + 78 + 81 +- 75)/8 # 0.875
+# mean 변수, contrast 변수로 만들어서 곱해서 sum 하면 더 깔끔함! 2 ^ (k-1)로 나누어주면 됨, r 나누는 거 아님 
+cell_means <- tapply(y3, a3:b3:c3, mean)
+contrast_abc <- c(-1, 1, 1, -1, 1, -1, -1, 1)
+sum(cell_means * contrast_abc) / 2 ^ (k-1)
 
 # 9
 # 12.25

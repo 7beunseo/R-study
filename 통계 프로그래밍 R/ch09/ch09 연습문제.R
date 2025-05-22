@@ -1,3 +1,6 @@
+## 주의
+# 1. 잔차, 잔차제곱합, 회귀제곱합 모두 y 값이 기준 
+
 #####
 # 1 #
 #####
@@ -12,20 +15,26 @@ summary(lm1)
 
 # b
 lm1$fitted.values
+predict(out, newdata=data.frame(x=x)) # x 값에 대한 추정 
 
 # c
 lm1$residuals
+
+y - out$fitted.values # 관측값(y) - 추정값 (x에 빠는 게 아니라 y에 빼야 함)
+out$residuals # 잔차 출력 
 
 # d
 sum(lm1$residuals ^ 2)
 # 101.4667
 
 # e
-sum((lm1$fitted.values - mean(y))^2)
+sum((lm1$fitted.values - mean(y))^2) # mean(y)로 구해야 함. mean(x) 아님! 
 # 192.5333
 
 # f
 # Adjusted R-squared:  0.5686  -> 설명력 중간 
+# Multiple R-squared:  0.6549,	Adjusted R-squared:  0.5686 
+# Multiple R-squared -> 얘가 R^2 결정계수임 
 
 # g
 plot(y, lm1$residuals)
@@ -44,6 +53,21 @@ lm2 <- lm(yield ~ irrigation)
 summary(lm2)
 # p-value: 0.0001332 -> 일차 회귀계수 유의함 
 # y = -24.49 + 167.86 x 
+# Multiple R-squared:  0.717,	Adjusted R-squared:  0.6934 
+
+# 각 x점에서 추정값을 구하기
+out$fitted.values
+
+# 잔차구하기
+out$residuals
+yield - out$fitted.values
+
+# 잔차 제곱합 구하기
+sum((yield - out$fitted.values)^2)
+sum(out$residuals^2)
+
+# 회귀 제곱합 구하기
+sum((out$fitted.values - mean(yield))^2) # 제곱해야함 주의 
 
 
 #####
@@ -94,14 +118,16 @@ abline(lm4)
 # 2
 plot(lm4$fitted.values, lm4$residuals)
 summary(lm4)
-# Adjusted R-squared:  0.831-> 설명력이 높다 
+# Multiple R-squared:  0.8497,	Adjusted R-squared:  0.831 -> 설명력이 높다 
+# -2.2696 + 2.6087 x
+# p-value: 0.0001487 -> 추정된 회귀계수가 유의함 
 
 # 3
 length(x)
 t_val <- (coef(lm4)[2] - 1.5) / summary(lm4)$coefficients[2,2]
-p_val <- 1 - pt(t_val, df = 8)
+p_val <- 1 - pt(t_val, df = (length(x) - 2))
 p_val
-# 귀무가설 기각하지 못함 -> 기울기는 1.5이다, 1.5보다 크다고 할 수 없다. 
+# p=value 0.01059865 -> 귀무가설 기각 -> 기울기는 1.5보다 크다고 할 수 있음 (확인 필요) 
 
 
 #####
@@ -123,7 +149,7 @@ summary(lm5)
 # p-value: 1.434e-05 -> 추정한 일차 계수 유의함
 
 # d
-# Adjusted R-squared:  0.9051
+# Multiple R-squared:  0.9156,	Adjusted R-squared:  0.9051 
 # 잘 설명함 
 
 # e
@@ -168,7 +194,7 @@ summary(lm6)
 # p-value: p-value: 2.29e-11 -> 추정한 일차 회귀계수가 유의함 
 
 # d 
-# djusted R-squared:  0.9892 -> 잘 설명한다.
+# Multiple R-squared:  0.9902,	Adjusted R-squared:  0.9892: 0.9892 -> 잘 설명한다.
 
 # b
 lm6$fitted.values
@@ -208,10 +234,11 @@ summary(lm7)
 
 # c
 # p-value: 0.2616
+# t-통계량 = -1.221
 # 추정한 일차 회귀계수가 유의하지 않음 
 
 # d
-# Adjusted R-squared:  0.05784 
+# Multiple R-squared:  0.1756,	Adjusted R-squared:  0.05784 
 # 거의 설명하지 못함 
 
 # e
@@ -260,7 +287,6 @@ summary(dist_3)
 # p-value: < 2.2e-16 : 추정한 일차 회귀계수 유의
 # y = 2.9091 x
 # Adjusted R-squared:  0.8942  -> 잘 설명함 
-
 
 #####
 # 9 #
@@ -406,3 +432,4 @@ summary(lm11_d)
 # e
 lm11_e <- lm(salary~profits+age+sales+tenure+assets)
 summary(lm11_e)
+
