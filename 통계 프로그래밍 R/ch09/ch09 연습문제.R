@@ -92,11 +92,12 @@ y - predict(lm3)
 lm3$residuals
 
 # d
-# 잔차제곱합 - 맞나? 
-sum(lm3$residuals)
+# 잔차제곱합 
+sum(lm3$residuals^2)
 
-# 회귀제곱합 - 맞나? 
-sum((predict(lm3) -lm3$residuals)^2)
+# 회귀제곱합
+sum((predict(lm3) -lm3$residuals)^2) # 아님!! 
+sum((lm3$fitted.values - mean(y))^2)
 
 # e
 # Multiple R-squared:   0.95
@@ -165,9 +166,9 @@ plot(lm5$fitted.values, lm5$residuals)
 # h
 plot(lm5) # 만족한다고 할 수 있음 
 # qqline 그리기 
+# 잔차에 대한 qqline이므로 잔차를 대상으로 그려야 함!! 
 qqnorm(lm5$residuals)
 qqline(lm5$residuals)
-
 
 # i
 predict(lm5, newdata=data.frame(x=mean(x)))
@@ -206,11 +207,12 @@ lm6$residuals
 plot(lm6$fitted.values, lm6$residuals)
 
 # h
-plot(lm6)
+qqnorm(lm6$residuals)
+qqline(lm6$residuals)
 
 # i
-predict(lm6, newdata=data.frame(x=5,3))
-# 45.49435
+predict(lm6, newdata=data.frame(x=5.3))
+# 48.22401 
 
 
 #####
@@ -255,6 +257,7 @@ plot(lm7)
 
 # i
 predict(lm7, newdata=data.frame(x=400))
+# 1.153659
 
 
 #####
