@@ -8,9 +8,7 @@
 x <- c(159, 280, 101, 121, 224, 222, 379, 179, 250, 170)
 
 # a
-t.test(x, mu=225, alt="greater")
-# p-value = 0.7301
-# 넘는다고 할 수 없음 
+# H0 : mu <= 225 vs H1 : mu > 225 
 
 # b
 mean(x)
@@ -19,12 +17,17 @@ var(x)
 sd(x) 
 
 # c
-t.test(x, mu=225, conf.leve=0.95)
-# 149.9249 267.0751
+t.test(x, mu=225, alt="greater")
+# [161.03, ∞) 
+
+# d
+t.test(x, mu=225, alt="greater")
+# p-value = 0.7301
+# 귀무가설 기각 -> 평균이 225를 넘는다고 할 수 없음 
 
 # e
-t.test(x, mu=225, conf.level=0.9)
-# 161.0343 255.9657
+t.test(x, mu=225, alt="greater", conf.level = 0.9) # conf.level 
+# [172.6886, ∞) 
 
 # f
 y <- log(x)
@@ -66,6 +69,7 @@ t.test(a, b)
 # p-value = 0.7421 -> 분산이 같다
 
 # b
+# H0 : mua = mub, H1: mua != mub 
 t.test(a, b, var.equal = T) 
 # p-value = 0.0352 -> 평균이 다르다. 
 
@@ -85,8 +89,8 @@ x2 <- c(54, 55, 64, 73, 61, 70, 76, 65, 78, 72)
 mean(x1); mean(x2)
 var(x1); var(x2)
 # 표준오차
-sd(x1) / sqrt(length(x1))
-sd(x2) / sqrt(length(x2))
+sd(x1) / sqrt(length(x1)) # 3.255081
+sd(x2) / sqrt(length(x2)) # 2.6533
 
 # b
 t.test(x1, x2, paired = T) # 분산 확인할 필요 없음 
@@ -181,7 +185,7 @@ mean(x); sd(x)
 mean(y); sd(y)
 
 # c
-var.test(x, y)
+var.test(x, y) # 꼭 분산이 같은지 확인하고 t.test 하기 
 # p-value = 0.9345
 # 분산 차이가 없다.
 
@@ -292,6 +296,7 @@ caucasian <- c(8.9, 8.5, 7.8, 8.1, 7.2)
 wilcox.test(native, caucasian, conf.level = 0.90)
 # p-value = 0.4081
 # 유의확률이 10%이므로 0.1과 비교함 -> 더 크므로 귀무가설을 기각할 수 없음 -> 차이가 유의하지 않음 
+#  -0.3999572  1.2999600
 
 
 ######

@@ -8,6 +8,7 @@ out <- lm(y~x)
 summary(out)
 # p-value: 0.005231
 # Adjusted R-squared:  0.599 
+# hat y = -0.7861(hat b0) + 0.6850 (hat b1)
 
 # 산점도
 plot(x, y)
@@ -15,8 +16,10 @@ plot(x, y)
 # 추정된 회귀직선 그리기
 abline(out)
 
-# 추정값
+# 추정값 (원래 데이터 x에서의 추정값) 
 out$fitted.values
+predict(out)
+predict(out, newdata=data.frame(x=x)) # 변수명 지켜야 함 
 
 # x=2.3에서의 반응 추정값
 # 구체적인 값들에 대한 추정값을 얻을 수 있음 !! 
@@ -40,22 +43,28 @@ summary(book.lm)
 # p-value: 0.0006445
 # Adjusted R-squared:  0.8539 
 # y = 41.3725 + 0.6859 X
+# hat(weight) = 41.3725 + 0.6859 X volumn 
 # 추정된 회귀직선의 설명력이 높음 (R^2)
 
 # 회귀계수의 유의성 검정
-# 귀무가설 : 계수가 0이다 -> 기각! 
+# 귀무가설 : b1 = 0 (일차 계수가 0이다) 
+# p-value = 0.000644 < 0.05 -> 귀무가설 기각! 
 # 추정된 회귀계수는 유의하다 
 
+# 회귀분석 결과를 포함한 객체의 속성 
 attributes(book.lm)
 
 # 회귀계수 출력 
 book.lm$coefficients
+book.lm$coef
 
 # 잔차 출력 
 book.lm$residuals
+weight - book.lm$fitted.values # 잔차 = 관측값 - 추정값 (predict, fitted.values) 
 
 # 추정값
 book.lm$fitted.values
+predict(book.lm)
 
 # 그래프
 plot(book.lm)
@@ -70,13 +79,14 @@ book.lm2 <- lm(weight ~ volumn + I(volumn^2))
 summary(book.lm2)
 # p-value: p-value: 0.0476
 # Adjusted R-squared:  0.8668
+# Multiple R-squared:  0.9049 -> 추정된 회귀직선의 설명력이 높다. 
 # 추정회귀식 y = -193 + 1.297 x + -00034 x^2
 
-# 귀무가설 : 일차 회귀계수가 0이다
-# 귀무가설 기각 -> 추정된 회귀계수는 유의함 
+# 귀무가설 : (b1 = 0) 일차 회귀계수가 0이다
+# p-value = 0.0476 < 0.05 -> 귀무가설 기각 -> 추정된 일차 회귀계수는 유의함 
 
-# 귀무가설 : 이차 회귀계수가 0이다 
-# 0.2643 -> 귀무가설 기가하지 못함 -> 추정된 회귀계수가 유의하지 않음 
+# 귀무가설 : (b2 = 0) 이차 회귀계수가 0이다 
+# p-value = 0.2643 > 0.05 -> 귀무가설 기각하지 못함 -> 추정된 이차 회귀계수가 유의하지 않음 
 
 
 #####
@@ -88,8 +98,9 @@ book.lm3 <- lm(weight ~ volumn + 0) # 0을 넣어줌 -> 절편 사라짐
 summary(book.lm3)
 # 추정회귀식 
 # y = 0.72759 x 
+# Multiple R-squared:  0.9823, -> 추정된 회귀직선의 설명력이 높은 편이다. 
 
-# 귀무가설 : 일차 회귀곗의 유의성 검정 
+# 귀무가설 : (b1=0) 일차 회귀곗의 유의성 검정 
 # p-value: 2.141e-07 -> 귀무가설 기각 -> 추정된 회귀계수는 유의하다 
 plot(book.lm3)
 
