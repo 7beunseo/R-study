@@ -1,3 +1,15 @@
+# 계수표 벡터 미리 만들어두기
+contrast_A   <- c(-1, -1, -1, -1, +1, +1, +1, +1)
+contrast_B   <- c(-1, -1, +1, +1, -1, -1, +1, +1)
+contrast_C   <- c(-1, +1, -1, +1, -1, +1, -1, +1)
+
+contrast_AB  <- contrast_A * contrast_B
+contrast_AC  <- contrast_A * contrast_C
+contrast_BC  <- contrast_B * contrast_C
+
+contrast_ABC <- contrast_A * contrast_B * contrast_C
+
+
 #####
 # 1 #
 #####
@@ -62,11 +74,24 @@ summary(L1)
 # 9
 # A의 수준에 대한 효과가 유의하다.
 # 나머지는 귀무가설 기각할 수 없다. 
+＃가설검정하라고 하면 꼭 귀무가설 세우고 p-value 언급, 결론을 말해야 함 
+# H0 : a1 = a2 = 0, H1 : not H0, p-value = 0.0272 < 0.05이므로 유의수준 0.05에서 귀무가설 기각 -> A의 수준에 대한 차이가 유의함, A 효과는 유의함 
+# H0 : b1 = b2 = 0, H1 : not H0, p-value = 0.0572 > 0.05이므로 귀무가설 기각할 수 없음 B 효과 유의하지 않으므로 B 수준 간 차이가 있다고 할 수 없음 
+# H0 : ab11 = ... = ab22 = not H0, p-value 0.7247 > 0.05이므로 귀무가설을 기각할 수 없음. A와 B의 상호작용 효과가 유의하지 않음 
+
 
 # 10
+# 요인 효과에 대한 모수 측정 
+# hat(a1) = -2.25, hat(a2) = 2.25 (고정효과모형 다 더해서 0이 나옴)
+# hat(b1) = -1.75, hat(b2) = 1.75 
+# hat(ab11) = -0.25, hat(ab12) = 0.25, hat(ab21) = 0.25, hat(ab22) = -0.25 -> a 기준으로 더하든, b 기준으로 더하든 0이 나옴 
 model.tables(L1)
 
 # 11
+# 오차항 없이 계산된 값 
+# y(ijk) = mu + ai + bj + abij
+# mean(y1) - 2.25 + 1.75 + 0.25 -> model.tables에 나오는 조합 각각 넣은 것과 결과가 동일함 (predict) 
+# 순서대로 A1:B1, A2:B1, A1:B2, A2:B2의 예측 값이 나옴 hat(y_ijk)
 predict(L1)
 # 순서 확인 방법
 model.frame(L1)
@@ -101,7 +126,10 @@ tapply(y2, b2, sd)
 interaction.plot(a2, b2, y2)
 interaction.plot(b2, a2, y2)
 # 상호작용 효과가 있어보인다.
-# A가 0수준일 때 B1가 B0보다 높고, A가 1수준일 때 B0이 B1보다 높다.
+# A가 0수준일 때 B1가 B0보다 반응값이 크고, A가 1수준일 때 B0이 B1보다 반응값이 크다.
+# A의 수준에 따라 B의 반응 경향이 다르며 반응선이 교차한다.
+# 마찬가지로 B의 수준에 따라 반응 경향이 다르므로 반응선이 교차한다.
+# A와 B의 상호작용 효과가 있어 보인다! 라고 구체적으로 설명하기 
 # 상호작용 그래프가 교차함 ! 
 
 # 4 # 5
@@ -131,9 +159,16 @@ sqrt(4512 * 2 ^ (2 - k2) / r2)
 L2 <- aov(y2~a2*b2)
 summary(L2)
 # 모든 효과가 유의함. 
+# H0: a0 = a1 = 0, H1: not H0, p-value = 0.0023669 < 0.05 유의수준 0.05에서 귀무가설 기각 -> 온도에 따른 효과가 있다. 
+# H0: b0 = b1 = 0, H1: not H0, p-value = 0.0007939 < 0.05, 유의수준 0.05에서 귀무가설 기각 -> 칩에 따른 효과가 있다.
+# H0: ab00 = ... = ab11 = 0, H1: not H0, p-value = 1.75e-05 < 0.05, 유의수준 귀무가설 기각 -> 온도와 칩에 따른 상호작용 효과가 있다. 
 
 # 9
 model.tables(L2)
+# -6.75  6.75 
+# 9 -9 
+# -23.75  23.75
+#  23.75 -23.75
 
 
 #####
@@ -146,9 +181,10 @@ y3 <- c(
   20, 22, 24, 22, 24, 26,
   35, 37, 39, 39, 40, 41
 )
-a3 <- as.factor(rep(rep(c("A0", "A1"), each=6), 2))
-b3 <- as.factor(rep(c("B0", "B1"), each=12))
-c3 <- as.factor(rep(rep(c("C0", "C1"), each=3), 4))
+# 위치 잘 보고 ㄴ넣기 
+a3 <- as.factor(rep(c("A0", "A1"), each=12))
+b3 <- as.factor(rep(rep(c("B0", "B1"), each=6), 2))
+c3 <- as.factor(rep(rep(c("C1", "C2"), each=3), 4))
 data.frame(y3, a3, b3, c3)
 k3 <- 3
 r3 <- 3
@@ -188,17 +224,17 @@ sum_v3
 
 ab_contrast <- c(1, 1, -1, -1, -1, -1, 1, 1)
 sum(ab_constrast * sum_v3) / 2 ^ (k3 - 1) / r3
-# 1.25
+# 2.25
 
 # 8
 ac_contrast <- c(1, -1, 1, -1, -1, 1, -1, 1)
 sum(ac_contrast * sum_v3) / 2 ^ (k3 - 1) / r3
-# -1.75
+# 1.25
 
 # 9
 bc_contrast <- c(1, -1, -1, 1, 1, -1, -1, 1)
 sum(bc_contrast * sum_v3) / 2 ^ (k3 - 1) / r3
-# 1.25
+# -1.75
 
 # 10
 abc_contrast <- c(-1, 1, 1, -1, 1, -1, -1, 1)
@@ -208,8 +244,8 @@ sum(abc_contrast * sum_v3) / 2 ^ (k3 - 1) / r3
 # 11
 L3 <- aov(y3~a3*b3*c3)
 anova(L3)
-# 주효과 중 a3 유의함 
-# 상호작용 중 a3:b3 a3:c3 a3:b3:c3 유의함 
+# 주효과 중 b3 유의함 (배양시간)
+# 상호작용 중 a3:b3 b3:c3 a3:b3:c3 유의함 (바이러스-배양시간), (배양시간, 배양액종류), (바이러스-배양시간-배양액종류)
 
 # 13
 L3_small <- aov(y3~a3+b3+c3+a3:b3+a3:c3+a3:b3:c3)
@@ -347,7 +383,7 @@ anova(L5)
 # 8
 L5_small <- aov(y5~a5+b5+c5+b5:c5)
 anova(L5_small)
-
+# 가설도 함께 세워야 함 
 
 #####
 # 6 #
@@ -391,17 +427,17 @@ mc6[2] - mc6[1]
 # 97 
 
 # 5
-ab_contrast_6 <- rep(c(-1, 1), each=4)
+ab_contrast_6 <- rep(c(-1, 1), each=4) # 1  1 -1 -1 -1 -1  1  1 -> 이걸로 바꿔야 함 
 sum(ab_contrast_6 * sum_v6) / 2^(k6 - 1) / r6
-# 45.5
+# -61.5
 
 ac_contrast_6 <- c(1, -1, 1, -1, -1, 1, -1, 1)
 sum(ac_contrast_6 * sum_v6) / 2^(k6 - 1) / r6
-83.25
+# 83.25
 
-bc_contrast_6 <- c(1, 1, -1, -1, -1, -1, 1, 1)
+bc_contrast_6 <- c(1, 1, -1, -1, -1, -1, 1, 1) # 1 -1 -1  1  1 -1 -1  1 -> 이걸로 바꿔야 함 
 sum(bc_contrast_6 * sum_v6) / 2^(k6 - 1) / r6
-# -61.5
+# -144.5
 
 # 6
 L6 <- aov(y6~a6*b6*c6)
@@ -423,6 +459,8 @@ d7 <- as.factor(c(rep(c(0, 1), each=8)))
 data.frame(y7, a7, b7, c7, d7)
 
 # 2
+# 별 쓰면 MSe가 안 구해져서 검정할 수 없음
+# 직접 조합을 넣어주어야 함 
 L7 <- aov(y7 ~ a7 + b7 + c7 + d7 
           + a7:b7 + a7:c7 + a7:d7 
           + b7:c7 + b7:d7 + c7:d7 
