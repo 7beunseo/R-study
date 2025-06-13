@@ -8,7 +8,14 @@ out <- lm(y~x)
 summary(out)
 # p-value: 0.005231
 # Adjusted R-squared:  0.599 
-# hat y = -0.7861(hat b0) + 0.6850 (hat b1)
+# hat y = -0.7861(hat b0) + 0.6850 (hat b1) * X 
+
+# 가설검정:
+# H0 : 기울기 b1 = 0 (x는 y에 영향을 주지 않는다)
+# H1 : 기울기 b1 ≠ 0 (x는 y에 영향을 준다)
+
+# 결과: p-value = 0.00523 < 0.05이므로 유의수준 5%에서 귀무가설을 기각한다.
+# ⇒ 추정된 회귀계수(기울기)는 통계적으로 유의하다.
 
 # 산점도
 plot(x, y)
@@ -44,9 +51,9 @@ summary(book.lm)
 # Adjusted R-squared:  0.8539 
 # y = 41.3725 + 0.6859 X
 # hat(weight) = 41.3725 + 0.6859 X volumn 
-# 추정된 회귀직선의 설명력이 높음 (R^2)
+# ⚠️ R^2 = 0.8748 => 추정된 회귀직선의 설명력이 높음 (R^2) ⚠️
 
-# 회귀계수의 유의성 검정
+# ⚠️ 회귀계수의 유의성 검정
 # 귀무가설 : b1 = 0 (일차 계수가 0이다) 
 # p-value = 0.000644 < 0.05 -> 귀무가설 기각! 
 # 추정된 회귀계수는 유의하다 
@@ -62,7 +69,7 @@ book.lm$coef
 book.lm$residuals
 weight - book.lm$fitted.values # 잔차 = 관측값 - 추정값 (predict, fitted.values) 
 
-# 추정값
+# 추정값 출력 
 book.lm$fitted.values
 predict(book.lm)
 
@@ -79,11 +86,11 @@ book.lm2 <- lm(weight ~ volumn + I(volumn^2))
 summary(book.lm2)
 # p-value: p-value: 0.0476
 # Adjusted R-squared:  0.8668
-# Multiple R-squared:  0.9049 -> 추정된 회귀직선의 설명력이 높다. 
+# ⚠️ Multiple R-squared:  0.9049 -> 추정된 회귀직선의 설명력이 높다. 
 # 추정회귀식 y = -193 + 1.297 x + -00034 x^2
 
 # 귀무가설 : (b1 = 0) 일차 회귀계수가 0이다
-# p-value = 0.0476 < 0.05 -> 귀무가설 기각 -> 추정된 일차 회귀계수는 유의함 
+# p-value = 0.0476 < 0.05 -> 유의수준 0.05에서 귀무가설 기각 -> 추정된 일차 회귀계수는 유의함 
 
 # 귀무가설 : (b2 = 0) 이차 회귀계수가 0이다 
 # p-value = 0.2643 > 0.05 -> 귀무가설 기각하지 못함 -> 추정된 이차 회귀계수가 유의하지 않음 
@@ -117,7 +124,19 @@ summary(out)
 # y hat = -1180.2817 + 0.9945 * temperature + 18.7559 * pressure
 plot(out)
 
-# temp=200, pressure=63일경우의 예측값?
+# ⚠️ temp 변수에 대한 회귀계수의 유의성 검정 
+# H0 : b1 = 0
+# H1 : b1 != 0
+# t-검정통계량 -> 1.695
+# p-value = 0.1654 > 0.05이므로 귀무가설을 기각하지 못함 -> temp에 대한 회귀계수는 유의하지 않음 
+
+# ⚠️ pressure 변수에 대한 회귀계수의 유의성 검정
+# H0 : b2 = 0
+# H1 : b2 != 0
+# t-검정통계량 -> 4.192 
+# p-value = 0.0138 < 0.05이므로 귀무가설을 기각 -> pressure에 대한 회귀계수는 유의함! 
+
+# ⚠️ temp=200, pressure=63일경우의 예측값?
 predict(out, newdata=data.frame(temperature=200, pressure=63))
 # 200.2472
 

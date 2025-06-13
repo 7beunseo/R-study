@@ -1,5 +1,7 @@
-## 주의
+## ⚠️ 주의
 # 1. 잔차, 잔차제곱합, 회귀제곱합 모두 y 값이 기준 
+# 2. 회귀식 모형을 잘 보기 (제곱이 있는지, 절편이 없는지, 있는지) 
+
 
 #####
 # 1 #
@@ -20,8 +22,8 @@ predict(out, newdata=data.frame(x=x)) # x 값에 대한 추정
 # c
 lm1$residuals
 
-y - out$fitted.values # 관측값(y) - 추정값 (x에 빠는 게 아니라 y에 빼야 함)
-out$residuals # 잔차 출력 
+y - lm1$fitted.values # 관측값(y) - 추정값 (x에 빠는 게 아니라 y에 빼야 함)
+lm1$residuals # 잔차 출력 
 
 # d
 sum(lm1$residuals ^ 2)
@@ -67,7 +69,7 @@ sum((yield - out$fitted.values)^2)
 sum(out$residuals^2)
 
 # 회귀 제곱합 구하기
-sum((out$fitted.values - mean(yield))^2) # 제곱해야함 주의 
+sum((out$fitted.values - mean(yield))^2) # ⚠️ 제곱해야함 주의 
 
 
 #####
@@ -79,9 +81,23 @@ x2 <- c(2, 3, 3, 6, 7, 9)
 y <- c(15, 9, 3, 25, 7, 13)
 
 # a
+### ⚠️ 추정하고자 하는 모형 잘 확인하기, 절편이 없는 상황임 ⚠️ ###
 lm3 <- lm(y~0+x1+x2)
 summary(lm3)
 # hat y = 1.8950 * x1 + -2.0908 * x2
+
+# 검정
+# x1 변수에 대한 회귀계수의 유의성 검정 
+# H0 : b1 = 0
+# H1 : b1 != 0
+# t-검정통계량 -> -2.287
+# p-value = 0.00909 < 0.05이므로 귀무가설을 기각 -> x1에 대한 회귀계수는 유의함  
+
+# x2 변수에 대한 회귀계수의 유의성 검정 
+# H0 : b2 = 0 ## ⚠️ b2 에 대해서 가설을 세워야 함 (b1 아님) 
+# H1 : b2 != 0
+# t-검정통계량 -> 4.733
+# p-value = 0.08414 > 0.05이므로 귀무가설을 기각하지 못함 -> x2에 대한 회귀계수는 유의하지 않음 ## ⚠️ p-value > 0.05 방향 잘 확인하기    
 
 # b
 predict(lm3)
@@ -93,11 +109,11 @@ lm3$residuals
 
 # d
 # 잔차제곱합 
-sum(lm3$residuals^2)
+sum(lm3$residuals^2) # 57.8573 
 
 # 회귀제곱합
 sum((predict(lm3) -lm3$residuals)^2) # 아님!! 
-sum((lm3$fitted.values - mean(y))^2)
+sum((lm3$fitted.values - mean(y))^2) # 285.8551
 
 # e
 # Multiple R-squared:   0.95
@@ -121,14 +137,15 @@ plot(lm4$fitted.values, lm4$residuals)
 summary(lm4)
 # Multiple R-squared:  0.8497,	Adjusted R-squared:  0.831 -> 설명력이 높다 
 # -2.2696 + 2.6087 x
-# p-value: 0.0001487 -> 추정된 회귀계수가 유의함 
+# p-value: 0.0001487 -> 유의수준 0.05에서 귀무가설 기각 -> 추정된 기울기 회귀계수가 유의함 
 
 # 3
 length(x)
 t_val <- (coef(lm4)[2] - 1.5) / summary(lm4)$coefficients[2,2]
 p_val <- 1 - pt(t_val, df = (length(x) - 2))
 p_val
-# p=value 0.01059865 -> 귀무가설 기각 -> 기울기는 1.5보다 크다고 할 수 있음 (확인 필요) 
+# p=value 0.01059865 > 0.01 -> 유의수준 1%에서 귀무가설 기각할 수 없음 -> 기울기는 1.5보다 크다고 할 수 없 (확인 필요) 
+# ⚠️ 유의수준 1%이면 0.01과 비교해야 함 
 
 
 #####
@@ -147,7 +164,7 @@ summary(lm5)
 # y = -252.2971 + 8.5290 x
 
 # c
-# p-value: 1.434e-05 -> 추정한 일차 계수 유의함
+# p-value: 1.434e-05 < 0.05이므로 유의수준 0.05에서 귀무가설을 기각한다. 추정한 기울기 회구계수가 유의하다.
 
 # d
 # Multiple R-squared:  0.9156,	Adjusted R-squared:  0.9051 
@@ -155,6 +172,7 @@ summary(lm5)
 
 # e
 lm5$fitted.values
+predict(lm5)
 
 # f
 lm5$residuals
@@ -192,7 +210,7 @@ summary(lm6)
 # y = 9.099 x 
 
 # c
-# p-value: p-value: 2.29e-11 -> 추정한 일차 회귀계수가 유의함 
+# p-value: p-value: 2.29e-11 < 0.05이므로 유의수준 0.05에서 귀무가설을 기각한다. 추정한 기울기 회귀계수가 유의함 
 
 # d 
 # Multiple R-squared:  0.9902,	Adjusted R-squared:  0.9892: 0.9892 -> 잘 설명한다.
@@ -219,10 +237,7 @@ predict(lm6, newdata=data.frame(x=5.3))
 # 7 #
 #####
 
-# 온도 (X)
 x <- c(280, 250, 300, 320, 310, 280, 320, 300, 320)
-
-# 수축량 (Y)
 y <- c(2.1, 3.0, 3.2, 1.4, 2.6, 2.7, 1.3, 3.4, 2.8)
 
 # a
@@ -235,9 +250,8 @@ summary(lm7)
 # y = 6.42195 + -0.01317 x
 
 # c
-# p-value: 0.2616
 # t-통계량 = -1.221
-# 추정한 일차 회귀계수가 유의하지 않음 
+# p-value: 0.2616 > 0.05이므로 유의수준 0.05에서 귀무가설을 기각할 수 없다. 추정된 기울기 회귀계수가 유의하지 않다. 
 
 # d
 # Multiple R-squared:  0.1756,	Adjusted R-squared:  0.05784 
@@ -272,24 +286,28 @@ abline(dist_1)
 # a
 dist_1 <- lm(dist~speed)
 summary(dist_1)
-# p-value: 1.49e-12 -> 추정한 일차 회귀계수 유의하다
-# Adjusted R-squared:  0.6438  -> 중간정도 설명 
+# H0: b1 = 0, H1 : b1 != 0
+# p-value: 1.49e-12 < 0.05이므로 귀무가설을 기각한다. 추정한 기울기 회귀계수 유의하다
+# Multiple R-squared:  0.6511  -> 중간정도 설명 
 # y = -17.5791 + 3.9324 x 
 
 # b
 dist_2 <- lm(dist~speed + I(speed^2))
 summary(dist_2)
-# p-value: 0.656 추정한 일차 회귀계수 유의하지 않음 
-# p-value: 0.136 추정한 이차 회귀계수 유의하지 않음 
-# Adjusted R-squared:  0.6532  중간정도 설명 
+# H0: b1 = 0, H1 : b1 != 0
+# p-value: 0.656 > 0.05이므로 유의수준 0.05에서 귀무가설을 기각할 수 없다. 추정한 일차 회귀계수 유의하지 않음 
+# H0 : b2 = 0, H1 : b2 != 0
+# p-value: 0.136 > 0.05이므로 유의수준 0.05에서 귀무가설을 기각할 수 없다. 추정한 이차 회귀계수 유의하지 않음 
+# Multiple R-squared:  0.6673  중간정도 설명 
 # y = 2.47014 + 0.91329 x + 0.09996 + x^2
 
 # c
 dist_3 <- lm(dist~speed + 0)
 summary(dist_3)
-# p-value: < 2.2e-16 : 추정한 일차 회귀계수 유의
+# H0: b1 = 0, H1 : b1 != 0
+# p-value: < 2.2e-16 < 0.05이므로 유의수준 0.05에서 귀무가설을 기각한다. 추정한 기울기 회귀계수 유의
 # y = 2.9091 x
-# Adjusted R-squared:  0.8942  -> 잘 설명함 
+# Multiple R-squared:  0.8963  -> 잘 설명함 
 
 #####
 # 9 #
@@ -322,17 +340,17 @@ summary(lm9)
 # hat Y = -1.1547620 + 0.3650335 * X1 + 0.0018275 * X2 + 0.1293062 * X3
 
 # c
-# p-value =  0.033539 -> X1 회귀계수는 유의하다
+# p-value =  0.033539 < 0.05이므로 유의수준 0.05에서 귀무가설을 기각한다.-> X1 회귀계수는 유의하다
 
 # d
-# p-value = 0.000332 -> X2 회귀계수는 유의하다
+# p-value = 0.000332 < 0.05이므로 유의수준 0.05에서 귀무가설을 기각한다. -> X2 회귀계수는 유의하다
 
 # e
-# p-value = 0.104760 -> X3 회귀계수는 유의하지 않다.
+# p-value = 0.104760 > 0.05이므로 귀무가설을 기각할 수 없다. -> X3 회귀계수는 유의하지 않다.
 
 # f 
-# Residual standard error: 0.5681
-# 조금 설명하는 편이다.
+# Multiple R-squared:  0.6145
+# 설명력이 중간이다. 
 
 
 ######
